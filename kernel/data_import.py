@@ -12,27 +12,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 
-def load_daily_data(train_end):
-    def parser(d): return datetime.datetime.strptime(d, '%Y-%m-%d')
-    df = pd.read_csv('Rebar.csv', header=1)
-    df['Date'] = list(map(parser, df.Date))
-    df.set_index('Date', inplace=True)
-    df = df.dropna(how='any')
-    contracts = np.array(list(df.trade_hiscode.unique()))
-
-    def contract_encoder(c): return np.where(contracts == c)[0][0]
-    contract_code = list(map(contract_encoder, df.trade_hiscode))
-    df['contract_code'] = contract_code
-    df = df.drop('trade_hiscode', axis=1)
-
-    df_train = df.loc[df.index <= parser(train_end)]
-    df_test = df.loc[df.index > parser(train_end)]
-
-    return df_train, df_test
-
-
 def load_min_data(train_end='2018-05-13 00:00'):
-    df = pd.read_csv('rebar_mins.csv', header=2)
+    df = pd.read_csv('data/rebar_mins.csv', header=2)
 
     def time_parser(t): return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M")
     time = list(map(time_parser, df.time))
